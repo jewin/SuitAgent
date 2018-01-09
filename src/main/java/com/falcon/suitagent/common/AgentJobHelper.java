@@ -174,7 +174,7 @@ public class AgentJobHelper {
             if(start){
                 //开启监控服务
                 log.info("发现服务 {} , 启动插件 {} ",serverName,pluginName);
-                doJob(jobClazz,pluginName,plugin.step(),jobDataMap,serverName);
+                doJob(jobClazz, pluginName, plugin.step(), jobDataMap, serverName);
             }
         }
     }

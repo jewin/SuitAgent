@@ -148,7 +148,7 @@ public class HttpPlugin implements DetectPlugin {
                     }
                 }else if(addObj.isPostMethod()){
                     try {
-                        httpResult = HttpUtil.post(null,protocol + url,connectTimeout,readTimeout);
+                        httpResult = HttpUtil.post(null,protocol + url, connectTimeout, readTimeout);
                         isAva = true;
                     } catch (Exception e) {
                         detectResult.setSuccess(false);
@@ -186,10 +186,11 @@ public class HttpPlugin implements DetectPlugin {
      */
     @Override
     public Collection<String> detectAddressCollection() {
-        CacheUtil.initTagsCache(addresses,tagsCache);
+//        CacheUtil.initTagsCache(addresses,tagsCache);
         Set<String> adders = new HashSet<>();
         for (String address : addresses.values()) {
-            adders.addAll(helpTransformAddressCollection(address,","));
+//            adders.addAll(helpTransformAddressCollection(address,","));
+            adders.addAll(helpTransformAddressCollection(address, null));
         }
         return adders;
     }

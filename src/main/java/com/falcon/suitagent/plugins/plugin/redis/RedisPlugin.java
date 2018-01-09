@@ -91,10 +91,11 @@ public class RedisPlugin implements DetectPlugin {
     public void init(Map<String, String> properties) {
         this.step = Integer.parseInt(properties.get("step"));
         Set<String> keys = properties.keySet();
-        keys.stream().filter(key -> key.startsWith("redis.conf")).forEach(key -> {
-            String port = key.replace("redis.conf.","");
-            redisPortToConfMap.put(port,properties.get(key));
-        });
+//        keys.stream().filter(key -> key.startsWith("redis.conf")).forEach(key -> {
+//            String port = key.replace("redis.conf.","");
+//            redisPortToConfMap.put(port,properties.get(key));
+//        });
+        redisPortToConfMap.putAll(properties);
     }
 
     /**
@@ -147,15 +148,7 @@ public class RedisPlugin implements DetectPlugin {
     @Override
     public String agentSignName(String address) {
         try {
-            String addr = address.split(" ")[1];
-            String agentSignName = addr.replace(":","-");
-            String ip = HostUtil.getHostIp();
-            agentSignName = agentSignName.
-                    replace("0.0.0.0",ip).
-                    replace("127.0.0.1",ip).
-                    replace("localhost",ip).
-                    replace("*",ip);
-            return agentSignName;
+            return address.substring(0, address.indexOf("@"))  + ",";
         } catch (Exception e) {
             log.error("",e);
         }
@@ -194,21 +187,24 @@ public class RedisPlugin implements DetectPlugin {
                 }
             }
 
-//            String ip = address.split("\\:")[0];
-            String port = address.split("\\:")[1];
+            String[] redisConn =  address.split("\\:", -1);
+            String ip = redisConn[0];
+            String[] portAndPasswordArr = redisConn[1].split("@", -1);
+            String port = portAndPasswordArr[0];
+            String password = portAndPasswordArr[1];
 
             String cmd4Ping;
-            if (redisPortToConfMap.get(port) == null){
-                cmd4Ping = String.format("%s -p %s ping",redisCli,port);
+            if (StringUtils.isEmpty(password)){
+                cmd4Ping = String.format("%s -h %s -p %s ping", redisCli, ip, port);
             }else {
-                cmd4Ping = String.format("%s -a %s -p %s ping",redisCli,getRedisPasswordFromConfFile(redisPortToConfMap.get(port)),port);
+                cmd4Ping = String.format("%s -a %s -h %s -p %s ping", redisCli, password, ip, port);
             }
 
             String cmd4Info;
-            if (redisPortToConfMap.get(port) == null){
-                cmd4Info = String.format("%s -p %s info",redisCli,port);
+            if (StringUtils.isEmpty(password)){
+                cmd4Info = String.format("%s -h %s -p %s info", redisCli, ip, port);
             }else {
-                cmd4Info = String.format("%s -a %s -p %s info",redisCli,getRedisPasswordFromConfFile(redisPortToConfMap.get(port)),port);
+                cmd4Info = String.format("%s -a %s -h %s -p %s info", redisCli, password, ip, port);
             }
 
             boolean detectSuccess = false;
@@ -454,7 +450,15 @@ public class RedisPlugin implements DetectPlugin {
      */
     @Override
     public Collection<String> detectAddressCollection() {
-        return new ArrayList<>();
+        Collection<String> c = new ArrayList<String>();
+        String redisList = redisPortToConfMap.get("redis.list");
+        if (StringUtils.isNotEmpty(redisList)) {
+            String[] redisArr = redisList.split(",");
+            for (String redisAddr : redisArr) {
+                c.add(redisAddr);
+            }
+        }
+        return c;
     }
 
     /**

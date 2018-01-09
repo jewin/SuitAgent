@@ -54,13 +54,12 @@ class AddressParse {
      * 解析失败返回null
      */
     static Address parseAddress(String address){
-        //get:https:www.baidu.com[tag1=tag1Value;tag2=tag2Value]
-        String[] ss = address.split(":");
-        int end = address.length();
-        if (address.contains("[")){
-            end = address.indexOf("[");
-        }
-        return new Address(ss[0],ss[1],address.substring(address.indexOf(ss[1]) + ss[1].length() + 1,end));
+        String method = address.substring(0, address.indexOf(":"));
+        String protocolTemp = address.substring(method.length() + 1);
+        String protocol = protocolTemp.substring(0, protocolTemp.indexOf(":"));
+        String url = protocolTemp.substring(protocolTemp.indexOf(":") + 1);
+
+        return new Address(method, protocol, url);
     }
 
 }

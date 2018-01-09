@@ -125,15 +125,15 @@ public class CacheUtil {
      * @param tagsCache
      */
     public static void initTagsCache(Map<String,String> addresses,Map<String,String> tagsCache){
-        addresses.keySet().forEach(key -> {
-            String value = addresses.get(key);
-            String firstAddress = value.split(",")[0];
-            if (!firstAddress.endsWith("[]") && firstAddress.contains("[") && firstAddress.contains("]")) {
-                //添加 行默认 的 tag cache
-                String tags = firstAddress.substring(firstAddress.indexOf("[") + 1, firstAddress.lastIndexOf("]"));
-                tags = tags.replace(";", ",");
-                tagsCache.put(key, tags);
-            }
-        });
+//        addresses.keySet().forEach(key -> {
+//            String value = addresses.get(key);
+//            String firstAddress = value.split(",")[0];
+//            if (!firstAddress.endsWith("[]") && firstAddress.contains("[") && firstAddress.contains("]")) {
+//                //添加 行默认 的 tag cache
+//                String tags = firstAddress.substring(firstAddress.indexOf("[") + 1, firstAddress.lastIndexOf("]"));
+//                tags = tags.replace(";", ",");
+//                tagsCache.put(key, tags);
+//            }
+//        });
     }
 }

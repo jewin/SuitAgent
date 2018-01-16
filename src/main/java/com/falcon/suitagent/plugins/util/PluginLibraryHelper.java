@@ -157,7 +157,7 @@ public class PluginLibraryHelper {
     public synchronized void register(){
         Set<ClassPath.ClassInfo> classInfos;
         try {
-            classInfos = ClassPath.from(classLoader).getTopLevelClassesRecursive("com.falcon.suitagent.plugins.plugin");
+            classInfos = ClassPath.from(classLoader).getTopLevelClassesRecursive("com.falcon.suitagent.plugins.plugin.oracle");
             for (ClassPath.ClassInfo classInfo : classInfos) {
                 String clazzName = classInfo.getName();
                 Class clazz = Class.forName(clazzName);
